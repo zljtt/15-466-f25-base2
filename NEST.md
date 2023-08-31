@@ -14,7 +14,7 @@ Here is a quick overview of what is included. For further information, ☺read t
 - Useful code (files you should investigate, but probably won't change):
 	- [`Mesh.hpp`](Mesh.hpp), [`Mesh.cpp`](Mesh.cpp) mesh loading.
 	- [`Scene.hpp`](Scene.hpp), [`Scene.cpp`](Scene.cpp) scene (transform hierarchy) loading and display (hmm, you might actually edit this code a bit).
-	- shaders (you might also build on these:
+	- shaders (you might also build on these):
 		- [`ColorProgram.hpp`](ColorProgram.hpp), [`ColorProgram.cpp`](ColorProgram.cpp) GLSL shader that draws objects with vertex colors.
 		- [`ColorTextureProgram.hpp`](ColorTextureProgram.hpp), [`ColorTextureProgram.cpp`](ColorTextureProgram.cpp) GLSL shader that draws objects with vertex colors and textures.
 		- [`LitColorTextureProgram.hpp`](LitColorTextureProgram.hpp), [`LitColorTextureProgram.cpp`](LitColorTextureProgram.cpp) GLSL shader that draws objects with vertex colors, textures, and lighting.
@@ -63,9 +63,9 @@ Setup for your development environment should be relatively simple:
 	- MacOS: e.g. `brew install node`
 	- Windows: [download from node's web page](https://nodejs.org/en/download/)
  3. Extract an appropriate [release of nest-libs](https://github.com/15-466/nest-libs/releases) to a sibling of this folder:
-    - Linux: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-linux-v0.12.tar.gz
-	- MacOS: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-macos-v0.12.tar.gz
-	- Windows: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-windows-v0.12.zip
+    - Linux: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-linux-v0.13.tar.gz
+	- MacOS: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-macos-v0.13.tar.gz
+	- Windows: https://github.com/15-466/nest-libs/releases/download/v0.12/nest-libs-windows-v0.13.zip
 
 Once you are finished, your directory tree should looks something like this:
 
