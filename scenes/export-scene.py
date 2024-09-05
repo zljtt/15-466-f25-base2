@@ -2,7 +2,7 @@
 
 #based on 'export-sprites.py' and 'glsprite.py' from TCHOW Rainbow; code used is released into the public domain.
 
-#Note: Script meant to be executed from within blender 2.9, as per:
+#Note: Script meant to be executed from within blender 4.2.1, as per:
 #blender --background --python export-scene.py -- [...see below...]
 
 import sys,re

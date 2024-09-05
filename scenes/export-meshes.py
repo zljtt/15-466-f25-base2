@@ -4,7 +4,7 @@
 #Patched for 15-466-f19 to remove non-pnct formats!
 #Patched for 15-466-f20 to merge data all at once (slightly faster)
 
-#Note: Script meant to be executed within blender 2.9, as per:
+#Note: Script meant to be executed within blender 4.2.1, as per:
 #blender --background --python export-meshes.py -- [...see below...]
 
 import sys,re
