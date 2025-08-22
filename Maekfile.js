@@ -47,13 +47,13 @@ if (maek.OS === "windows") {
 	maek.options.CPPFlags.push(
 		`-O2`, //optimize
 		//include paths for nest libraries:
-		`-I${NEST_LIBS}/SDL3/include`, `-D_THREAD_SAFE`, //the output of sdl-config --cflags
+		`-I${NEST_LIBS}/SDL3/include`, `-D_THREAD_SAFE`,
 		`-I${NEST_LIBS}/glm/include`,
 		`-I${NEST_LIBS}/libpng/include`
 	);
 	maek.options.LINKLibs.push(
 		//linker flags for nest libraries:
-		`-L${NEST_LIBS}/SDL3/lib`, `-lSDL3`, `-lm`, `-ldl`, `-lasound`, `-lpthread`, `-lX11`, `-lXext`, `-lpthread`, `-lrt`, `-lGL`, //the output of sdl-config --static-libs
+		`-L${NEST_LIBS}/SDL3/lib`, `-lSDL3`, `-lm`, `-ldl`, `-lasound`, `-lpthread`, `-lX11`, `-lXext`, `-lpthread`, `-lrt`, `-lGL`,
 		`-L${NEST_LIBS}/libpng/lib`, `-lpng`,
 		`-L${NEST_LIBS}/zlib/lib`, `-lz`
 	);
@@ -61,7 +61,7 @@ if (maek.OS === "windows") {
 	maek.options.CPPFlags.push(
 		`-O2`, //optimize
 		//include paths for nest libraries:
-		`-I${NEST_LIBS}/SDL3/include`, `-D_THREAD_SAFE`, //the output of sdl-config --cflags
+		`-I${NEST_LIBS}/SDL3/include`, `-D_THREAD_SAFE`,
 		`-I${NEST_LIBS}/glm/include`,
 		`-I${NEST_LIBS}/libpng/include`
 	);
