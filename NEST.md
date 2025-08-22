@@ -57,15 +57,15 @@ Setup for your development environment should be relatively simple:
  1. Install one of our target C++ compilers:
  	- Linux: g++
 	- MacOS: clang++ (from XCode). From the terminal: `xcode-select --install`
-	- Windows: Visual Studio Community 2022
+	- Windows: Visual Studio Community 2022 (or just the build tools). From the terminal: `winget install Microsoft.VisualStudio.2022.Community` (or `Microsoft.VisualStudio.2022.BuildTools`)
  2. Install [node](https://node.js):
     - Linux: e.g. `sudo apt-get install node`
 	- MacOS: e.g. `brew install node`
-	- Windows: [download from node's web page](https://nodejs.org/en/download/)
+	- Windows: e.g. `winget install OpenJS.NodeJS`
  3. Extract an appropriate [release of nest-libs](https://github.com/15-466/nest-libs/releases) to a sibling of this folder:
-	- Linux: https://github.com/15-466/nest-libs/releases/download/v0.13/nest-libs-linux-v0.13.tar.gz
-	- MacOS: https://github.com/15-466/nest-libs/releases/download/v0.13/nest-libs-macos-v0.13.tar.gz
-	- Windows: https://github.com/15-466/nest-libs/releases/download/v0.13/nest-libs-windows-v0.13.zip
+	- Linux: https://github.com/15-466/nest-libs/releases/download/v0.14/nest-libs-linux-v0.14.tar.gz
+	- MacOS: https://github.com/15-466/nest-libs/releases/download/v0.14/nest-libs-macos-v0.14.tar.gz
+	- Windows: https://github.com/15-466/nest-libs/releases/download/v0.14/nest-libs-windows-v0.14.zip
 
 Once you are finished, your directory tree should looks something like this:
 
@@ -106,7 +106,7 @@ Here are a few worthwhile variations:
 
 ## A Word About Github Actions
 
-This repository is equipped with a `.github/workflows/build-workflow.yml` file that tells github that you would like it to build the code for you whenever you push code.
+This repository is equipped with a `.github/workflows/build-workflow.yml` file that tells github that you would like it to build the code for you whenever you press the "Actions > Build > Run workflow" button.
 This is a great way to check if things are working cross-platform and even to package releases of your game (the workflow is set up such that if you create a release through the github web UI, it will automatically build, package, and upload binaries to the release).
 
 It can also be a frustrating and time-wasting trap to try to debug any build failures solely using github actions. Use it as a check, but not a development environment.
