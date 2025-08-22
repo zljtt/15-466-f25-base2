@@ -4,7 +4,8 @@
 #include "GL.hpp"
 #include "load_save_png.hpp"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
 #include <chrono>
 #include <iostream>
@@ -38,28 +39,27 @@ int main(int argc, char **argv) {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
 
 	//create window:
-	SDL_Window *window = SDL_CreateWindow(
+	Mode::window = SDL_CreateWindow(
 		"pnct viewer",
-		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
 		800, 800,
 		SDL_WINDOW_OPENGL
 		| SDL_WINDOW_RESIZABLE //uncomment to allow resizing
-		| SDL_WINDOW_ALLOW_HIGHDPI //uncomment for full resolution on high-DPI screens
+		| SDL_WINDOW_HIGH_PIXEL_DENSITY //uncomment for full resolution on high-DPI screens
 	);
 
 	//prevent exceedingly tiny windows when resizing:
-	SDL_SetWindowMinimumSize(window, 100, 100);
+	SDL_SetWindowMinimumSize(Mode::window, 100, 100);
 
-	if (!window) {
+	if (!Mode::window) {
 		std::cerr << "Error creating SDL window: " << SDL_GetError() << std::endl;
 		return 1;
 	}
 
 	//Create OpenGL context:
-	SDL_GLContext context = SDL_GL_CreateContext(window);
+	SDL_GLContext context = SDL_GL_CreateContext(Mode::window);
 
 	if (!context) {
-		SDL_DestroyWindow(window);
+		SDL_DestroyWindow(Mode::window);
 		std::cerr << "Error creating OpenGL context: " << SDL_GetError() << std::endl;
 		return 1;
 	}
@@ -68,9 +68,9 @@ int main(int argc, char **argv) {
 	init_GL();
 
 	//Set VSYNC + Late Swap (prevents crazy FPS):
-	if (SDL_GL_SetSwapInterval(-1) != 0) {
+	if (!SDL_GL_SetSwapInterval(-1)) {
 		std::cerr << "NOTE: couldn't set vsync + late swap tearing (" << SDL_GetError() << ")." << std::endl;
-		if (SDL_GL_SetSwapInterval(1) != 0) {
+		if (!SDL_GL_SetSwapInterval(1)) {
 			std::cerr << "NOTE: couldn't set vsync (" << SDL_GetError() << ")." << std::endl;
 		}
 	}
@@ -110,9 +110,9 @@ int main(int argc, char **argv) {
 	//On non-highDPI displays, window_size will always equal drawable_size.
 	auto on_resize = [&](){
 		int w,h;
-		SDL_GetWindowSize(window, &w, &h);
+		SDL_GetWindowSize(Mode::window, &w, &h);
 		window_size = glm::uvec2(w, h);
-		SDL_GL_GetDrawableSize(window, &w, &h);
+		SDL_GetWindowSizeInPixels(Mode::window, &w, &h);
 		drawable_size = glm::uvec2(w, h);
 		glViewport(0, 0, drawable_size.x, drawable_size.y);
 	};
@@ -125,25 +125,25 @@ int main(int argc, char **argv) {
 
 		{ //(1) process any events that are pending
 			static SDL_Event evt;
-			while (SDL_PollEvent(&evt) == 1) {
+			while (SDL_PollEvent(&evt)) {
 				//handle resizing:
-				if (evt.type == SDL_WINDOWEVENT && evt.window.event == SDL_WINDOWEVENT_SIZE_CHANGED) {
+				if (evt.type == SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED) {
 					on_resize();
 				}
 				//handle input:
 				if (Mode::current && Mode::current->handle_event(evt, window_size)) {
 					// mode handled it; great
-				} else if (evt.type == SDL_QUIT) {
+				} else if (evt.type == SDL_EVENT_QUIT) {
 					Mode::set_current(nullptr);
 					break;
-				} else if (evt.type == SDL_KEYDOWN && evt.key.keysym.sym == SDLK_PRINTSCREEN) {
+				} else if (evt.type == SDL_EVENT_KEY_DOWN && evt.key.key == SDLK_PRINTSCREEN) {
 					// --- screenshot key ---
 					std::string filename = "screenshot.png";
 					std::cout << "Saving screenshot to '" << filename << "'." << std::endl;
 					glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
 					glReadBuffer(GL_FRONT);
 					int w,h;
-					SDL_GL_GetDrawableSize(window, &w, &h);
+					SDL_GetWindowSizeInPixels(Mode::window, &w, &h);
 					std::vector< glm::u8vec4 > data(w*h);
 					glReadPixels(0,0,w,h, GL_RGBA, GL_UNSIGNED_BYTE, data.data());
 					for (auto &px : data) {
@@ -175,16 +175,16 @@ int main(int argc, char **argv) {
 		}
 
 		//Wait until the recently-drawn frame is shown before doing it all again:
-		SDL_GL_SwapWindow(window);
+		SDL_GL_SwapWindow(Mode::window);
 	}
 
 
 	//------------  teardown ------------
-	SDL_GL_DeleteContext(context);
+	SDL_GL_DestroyContext(context);
 	context = 0;
 
-	SDL_DestroyWindow(window);
-	window = NULL;
+	SDL_DestroyWindow(Mode::window);
+	Mode::window = NULL;
 
 	return 0;
 

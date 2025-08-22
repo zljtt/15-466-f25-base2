@@ -4,7 +4,7 @@ dist/README-glm.txt
 dist/README-libpng.txt
 dist/game.ilk
 dist/game.pdb
-dist/SDL2.dll
+dist/SDL3.dll
 dist/game
 dist/game.exe
 scenes/show-meshes*

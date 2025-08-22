@@ -21,7 +21,7 @@ ShowSceneMode::~ShowSceneMode() {
 
 bool ShowSceneMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
 	//----- trackball-style camera controls -----
-	if (evt.type == SDL_MOUSEBUTTONDOWN) {
+	if (evt.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 		if (evt.button.button == SDL_BUTTON_LEFT) {
 			//when camera is upside-down at rotation start, azimuth rotation should be reversed:
 			// (this ends up feeling more intuitive)
@@ -29,15 +29,15 @@ bool ShowSceneMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_
 			return true;
 		}
 	}
-	if (evt.type == SDL_MOUSEMOTION) {
-		if (evt.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+	if (evt.type == SDL_EVENT_MOUSE_MOTION) {
+		if (evt.motion.state & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)) {
 			//figure out the motion (as a fraction of a normalized [-a,a]x[-1,1] window):
 			glm::vec2 delta;
 			delta.x = evt.motion.xrel / float(window_size.x) * 2.0f;
 			delta.x *= float(window_size.y) / float(window_size.x);
 			delta.y = evt.motion.yrel / float(window_size.y) * -2.0f;
 
-			if (SDL_GetModState() & KMOD_SHIFT) {
+			if (SDL_GetModState() & SDL_KMOD_SHIFT) {
 				//shift: pan
 
 				glm::mat3 frame = glm::mat3_cast(scene_camera->transform->rotation);
@@ -62,7 +62,7 @@ bool ShowSceneMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_
 		}
 	}
 	//mouse wheel: dolly
-	if (evt.type == SDL_MOUSEWHEEL) {
+	if (evt.type == SDL_EVENT_MOUSE_WHEEL) {
 		camera.radius *= std::pow(0.5f, 0.1f * evt.wheel.y);
 		if (camera.radius < 1e-1f) camera.radius = 1e-1f;
 		if (camera.radius > 1e6f) camera.radius = 1e6f;

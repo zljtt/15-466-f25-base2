@@ -31,6 +31,9 @@ ShowMeshesMode::ShowMeshesMode(MeshBuffer const &buffer_) : buffer(buffer_) {
 	}
 
 	//select first mesh in buffer:
+	if (!buffer.meshes.empty()) {
+		current_mesh_name = buffer.meshes.begin()->first;
+	}
 	select_prev_mesh();
 }
 
@@ -38,19 +41,19 @@ ShowMeshesMode::~ShowMeshesMode() {
 }
 
 bool ShowMeshesMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window_size) {
-	if (evt.type == SDL_KEYDOWN) {
-		if (evt.key.keysym.sym == SDLK_RIGHT) {
+	if (evt.type == SDL_EVENT_KEY_DOWN) {
+		if (evt.key.key == SDLK_RIGHT) {
 			select_next_mesh();
 			return true;
 		}
-		if (evt.key.keysym.sym == SDLK_LEFT) {
+		if (evt.key.key == SDLK_LEFT) {
 			select_prev_mesh();
 			return true;
 		}
 	}
 
 	//----- trackball-style camera controls -----
-	if (evt.type == SDL_MOUSEBUTTONDOWN) {
+	if (evt.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 		if (evt.button.button == SDL_BUTTON_LEFT) {
 			//when camera is upside-down at rotation start, azimuth rotation should be reversed:
 			// (this ends up feeling more intuitive)
@@ -58,15 +61,15 @@ bool ShowMeshesMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window
 			return true;
 		}
 	}
-	if (evt.type == SDL_MOUSEMOTION) {
-		if (evt.motion.state & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+	if (evt.type == SDL_EVENT_MOUSE_MOTION) {
+		if (evt.motion.state & SDL_BUTTON_MASK(SDL_BUTTON_LEFT)) {
 			//figure out the motion (as a fraction of a normalized [-a,a]x[-1,1] window):
 			glm::vec2 delta;
 			delta.x = evt.motion.xrel / float(window_size.x) * 2.0f;
 			delta.x *= float(window_size.y) / float(window_size.x);
 			delta.y = evt.motion.yrel / float(window_size.y) * -2.0f;
 
-			if (SDL_GetModState() & KMOD_SHIFT) {
+			if (SDL_GetModState() & SDL_KMOD_SHIFT) {
 				//shift: pan
 
 				glm::mat3 frame = glm::mat3_cast(scene_camera->transform->rotation);
@@ -91,7 +94,7 @@ bool ShowMeshesMode::handle_event(SDL_Event const &evt, glm::uvec2 const &window
 		}
 	}
 	//mouse wheel: dolly
-	if (evt.type == SDL_MOUSEWHEEL) {
+	if (evt.type == SDL_EVENT_MOUSE_WHEEL) {
 		camera.radius *= std::pow(0.5f, 0.1f * evt.wheel.y);
 		if (camera.radius < 1e-1f) camera.radius = 1e-1f;
 		if (camera.radius > 1e6f) camera.radius = 1e6f;
@@ -153,8 +156,9 @@ void ShowMeshesMode::draw(glm::uvec2 const &drawable_size) {
 
 void ShowMeshesMode::select_prev_mesh() {
 	auto f = buffer.meshes.find(current_mesh_name);
-	if (f != buffer.meshes.end()) --f;
-	if (f == buffer.meshes.end()) f = buffer.meshes.begin();
+	if (f != buffer.meshes.end()) {
+		if (f != buffer.meshes.begin()) --f;
+	}
 
 	if (f != buffer.meshes.end()) {
 		current_mesh_name = f->first;
@@ -175,7 +179,10 @@ void ShowMeshesMode::select_prev_mesh() {
 
 void ShowMeshesMode::select_next_mesh() {
 	auto f = buffer.meshes.find(current_mesh_name);
-	if (f != buffer.meshes.end()) ++f;
+	if (f != buffer.meshes.end()) {
+		++f;
+		if (f == buffer.meshes.end()) --f;
+	}
 	if (f == buffer.meshes.end()) {
 		auto temp = buffer.meshes.rbegin();
 		if (temp != buffer.meshes.rend()) {
