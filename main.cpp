@@ -99,6 +99,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	//Set automatic SRGB encoding if framebuffer needs it:
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
 	//Hide mouse cursor (note: showing can be useful for debugging):
 	//SDL_ShowCursor(SDL_DISABLE);
 

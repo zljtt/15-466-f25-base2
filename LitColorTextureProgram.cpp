@@ -80,6 +80,9 @@ LitColorTextureProgram::LitColorTextureProgram() {
 		"in vec4 color;\n"
 		"in vec2 texCoord;\n"
 		"out vec4 fragColor;\n"
+		"float random(vec2 st) { //from https://thebookofshaders.com/10/\n"
+		"	return fract(sin(dot(st, vec2(12.9898, 78.233)))*43758.5453123);\n"
+		"}\n"
 		"void main() {\n"
 		"	vec3 n = normalize(normal);\n"
 		"	vec3 e;\n"
@@ -104,6 +107,19 @@ LitColorTextureProgram::LitColorTextureProgram() {
 		"	}\n"
 		"	vec4 albedo = texture(TEX, texCoord) * color;\n"
 		"	fragColor = vec4(e*albedo.rgb, albedo.a);\n"
+		/* DEBUG: check color output linearity:
+		"	float t = random(gl_FragCoord.xy/1280.0);\n"
+		"	float amt = fract(gl_FragCoord.x/512.0);\n"
+		"	if (fract(gl_FragCoord.y / 128.0) > 0.5) {\n"
+		"		if (amt > t) {\n"
+		"			fragColor = vec4(1.0,1.0,1.0,1.0);\n"
+		"		} else {\n"
+		"			fragColor = vec4(0.0,0.0,0.0,1.0);\n"
+		"		}\n"
+		"	} else {\n"
+		"		fragColor = vec4(amt,amt,amt,1.0);\n"
+		"	}\n"
+		*/
 		"}\n"
 	);
 	//As you can see above, adjacent strings in C/C++ are concatenated.
