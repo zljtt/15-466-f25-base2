@@ -26,6 +26,7 @@ const NEST_LIBS = `../nest-libs/${maek.OS}`;
 if (maek.OS === "windows") {
 	maek.options.CPPFlags.push(
 		`/O2`, //optimize
+		`/D_USE_MATH_DEFINES`, //make sure M_PI exists
 		//include paths for nest libraries:
 		`/I${NEST_LIBS}/SDL3/include`,
 		`/I${NEST_LIBS}/glm/include`,
@@ -232,15 +233,15 @@ function init_maek() {
 	}
 
 	if (maek.OS === 'windows') {
-		DEFAULT_OPTIONS.CPP = ['cl.exe', '/nologo', '/EHsc', '/Z7', '/std:c++17', '/W4', '/WX', '/MD'];
+		DEFAULT_OPTIONS.CPP = ['cl.exe', '/nologo', '/EHsc', '/Z7', '/std:c++20', '/W4', '/WX', '/MD'];
 		//TODO: could embed manifest to set UTF8 codepage
 		DEFAULT_OPTIONS.LINK = ['link.exe', '/nologo', '/SUBSYSTEM:CONSOLE', '/DEBUG:FASTLINK', '/INCREMENTAL:NO'];
 	} else if (maek.OS === 'linux') {
-		DEFAULT_OPTIONS.CPP = ['g++', '-std=c++17', '-Wall', '-Werror', '-g'];
-		DEFAULT_OPTIONS.LINK = ['g++', '-std=c++17', '-Wall', '-Werror', '-g'];
+		DEFAULT_OPTIONS.CPP = ['g++', '-std=c++20', '-Wall', '-Werror', '-g'];
+		DEFAULT_OPTIONS.LINK = ['g++', '-std=c++20', '-Wall', '-Werror', '-g'];
 	} else if (maek.OS === 'macos') {
-		DEFAULT_OPTIONS.CPP = ['clang++', '-std=c++17', '-Wall', '-Werror', '-g'];
-		DEFAULT_OPTIONS.LINK = ['clang++', '-std=c++17', '-Wall', '-Werror', '-g'];
+		DEFAULT_OPTIONS.CPP = ['clang++', '-std=c++20', '-Wall', '-Werror', '-g'];
+		DEFAULT_OPTIONS.LINK = ['clang++', '-std=c++20', '-Wall', '-Werror', '-g'];
 	}
 
 	//any settings here override 'DEFAULT_OPTIONS':
