@@ -126,7 +126,7 @@ void ShowMeshesMode::draw(glm::uvec2 const &drawable_size) {
 	scene.draw(*scene_camera);
 
 	{ //decorate with some lines:
-		DrawLines draw_lines(scene_camera->make_projection() * glm::mat4(scene_camera->transform->make_world_to_local()));
+		DrawLines draw_lines(scene_camera->make_projection() * glm::mat4(scene_camera->transform->make_local_from_world()));
 
 		//axis (unit-length):
 		draw_lines.draw(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 0.0f, 0.0f), glm::u8vec4(0xff, 0x00, 0x00, 0xff));

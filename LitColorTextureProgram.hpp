@@ -18,9 +18,9 @@ struct LitColorTextureProgram {
 	GLuint TexCoord_vec2 = -1U;
 
 	//Uniform (per-invocation variable) locations:
-	GLuint OBJECT_TO_CLIP_mat4 = -1U;
-	GLuint OBJECT_TO_LIGHT_mat4x3 = -1U;
-	GLuint NORMAL_TO_LIGHT_mat3 = -1U;
+	GLuint CLIP_FROM_OBJECT_mat4 = -1U;
+	GLuint LIGHT_FROM_OBJECT_mat4x3 = -1U;
+	GLuint LIGHT_FROM_NORMAL_mat3 = -1U;
 
 	//lighting:
 	GLuint LIGHT_TYPE_int = -1U;

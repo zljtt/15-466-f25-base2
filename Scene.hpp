@@ -37,11 +37,11 @@ struct Scene {
 
 		//It is often convenient to construct matrices representing this transformation:
 		// ..relative to its parent:
-		glm::mat4x3 make_local_to_parent() const;
-		glm::mat4x3 make_parent_to_local() const;
+		glm::mat4x3 make_parent_from_local() const;
+		glm::mat4x3 make_local_from_parent() const;
 		// ..relative to the world:
-		glm::mat4x3 make_local_to_world() const;
-		glm::mat4x3 make_world_to_local() const;
+		glm::mat4x3 make_world_from_local() const;
+		glm::mat4x3 make_local_from_world() const;
 
 		//since hierarchy is tracked through pointers, copy-constructing a transform  is not advised:
 		Transform(Transform const &) = delete;
@@ -66,9 +66,9 @@ struct Scene {
 			GLuint count = 0; //number of vertices to draw; passed to glDrawArrays
 
 			//uniforms:
-			GLuint OBJECT_TO_CLIP_mat4 = -1U; //uniform location for object to clip space matrix
-			GLuint OBJECT_TO_LIGHT_mat4x3 = -1U; //uniform location for object to light space (== world space) matrix
-			GLuint NORMAL_TO_LIGHT_mat3 = -1U; //uniform location for normal to light space (== world space) matrix
+			GLuint CLIP_FROM_OBJECT_mat4 = -1U; //uniform location for object to clip space matrix
+			GLuint LIGHT_FROM_OBJECT_mat4x3 = -1U; //uniform location for object to light space (== world space) matrix
+			GLuint LIGHT_FROM_NORMAL_mat3 = -1U; //uniform location for normal to light space (== world space) matrix
 
 			std::function< void() > set_uniforms; //(optional) function to set any other useful uniforms
 
@@ -126,7 +126,7 @@ struct Scene {
 	void draw(Camera const &camera) const;
 
 	//..sometimes, you want to draw with a custom projection matrix and/or light space:
-	void draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light = glm::mat4x3(1.0f)) const;
+	void draw(glm::mat4 const &clip_from_world, glm::mat4x3 const &light_from_world = glm::mat4x3(1.0f)) const;
 
 	//add transforms/objects/cameras from a scene file to this scene:
 	// the 'on_drawable' callback gives your code a chance to look up mesh data and make Drawables:

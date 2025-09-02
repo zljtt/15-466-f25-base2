@@ -94,19 +94,19 @@ void ShowSceneMode::draw(glm::uvec2 const &drawable_size) {
 	scene.draw(*scene_camera);
 
 	{ //decorate with some lines:
-		DrawLines draw_lines(scene_camera->make_projection() * glm::mat4(scene_camera->transform->make_world_to_local()));
+		DrawLines draw_lines(scene_camera->make_projection() * glm::mat4(scene_camera->transform->make_local_from_world()));
 		for (auto &transform : scene.transforms) {
-			glm::mat4 local_to_world = transform.make_local_to_world();
-			auto xf = [&local_to_world](glm::vec3 const &vec) {
-				return glm::vec3(local_to_world * glm::vec4(vec, 1.0f));
+			glm::mat4 world_from_local = transform.make_world_from_local();
+			auto xf = [&world_from_local](glm::vec3 const &vec) {
+				return glm::vec3(world_from_local * glm::vec4(vec, 1.0f));
 			};
-			auto xfd = [&local_to_world](glm::vec3 const &vec) {
-				return glm::vec3(local_to_world * glm::vec4(vec, 0.0f));
+			auto xfd = [&world_from_local](glm::vec3 const &vec) {
+				return glm::vec3(world_from_local * glm::vec4(vec, 0.0f));
 			};
 
 			if (transform.parent) {
 				//connect to parent:
-				glm::vec3 p = glm::vec3(transform.parent->make_local_to_world()[3]);
+				glm::vec3 p = glm::vec3(transform.parent->make_world_from_local()[3]);
 				draw_lines.draw(p, xf(glm::vec3(0.0f)), glm::u8vec4(0xff, 0xff, 0x00, 0xff));
 			}
 

@@ -9,7 +9,7 @@
 
 //-------------------------
 
-glm::mat4x3 Scene::Transform::make_local_to_parent() const {
+glm::mat4x3 Scene::Transform::make_parent_from_local() const {
 	//compute:
 	//   translate   *   rotate    *   scale
 	// [ 1 0 0 p.x ]   [       0 ]   [ s.x 0 0 0 ]
@@ -26,7 +26,7 @@ glm::mat4x3 Scene::Transform::make_local_to_parent() const {
 	);
 }
 
-glm::mat4x3 Scene::Transform::make_parent_to_local() const {
+glm::mat4x3 Scene::Transform::make_local_from_parent() const {
 	//compute:
 	//   1/scale       *    rot^-1   *  translate^-1
 	// [ 1/s.x 0 0 0 ]   [       0 ]   [ 0 0 0 -p.x ]
@@ -56,18 +56,18 @@ glm::mat4x3 Scene::Transform::make_parent_to_local() const {
 	);
 }
 
-glm::mat4x3 Scene::Transform::make_local_to_world() const {
+glm::mat4x3 Scene::Transform::make_world_from_local() const {
 	if (!parent) {
-		return make_local_to_parent();
+		return make_parent_from_local();
 	} else {
-		return parent->make_local_to_world() * glm::mat4(make_local_to_parent()); //note: glm::mat4(glm::mat4x3) pads with a (0,0,0,1) row
+		return parent->make_world_from_local() * glm::mat4(make_parent_from_local()); //note: glm::mat4(glm::mat4x3) pads with a (0,0,0,1) row
 	}
 }
-glm::mat4x3 Scene::Transform::make_world_to_local() const {
+glm::mat4x3 Scene::Transform::make_local_from_world() const {
 	if (!parent) {
-		return make_parent_to_local();
+		return make_local_from_parent();
 	} else {
-		return make_parent_to_local() * glm::mat4(parent->make_world_to_local()); //note: glm::mat4(glm::mat4x3) pads with a (0,0,0,1) row
+		return make_local_from_parent() * glm::mat4(parent->make_local_from_world()); //note: glm::mat4(glm::mat4x3) pads with a (0,0,0,1) row
 	}
 }
 
@@ -82,12 +82,12 @@ glm::mat4 Scene::Camera::make_projection() const {
 
 void Scene::draw(Camera const &camera) const {
 	assert(camera.transform);
-	glm::mat4 world_to_clip = camera.make_projection() * glm::mat4(camera.transform->make_world_to_local());
-	glm::mat4x3 world_to_light = glm::mat4x3(1.0f);
-	draw(world_to_clip, world_to_light);
+	glm::mat4 clip_from_world = camera.make_projection() * glm::mat4(camera.transform->make_local_from_world());
+	glm::mat4x3 light_from_world = glm::mat4x3(1.0f);
+	draw(clip_from_world, light_from_world);
 }
 
-void Scene::draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_light) const {
+void Scene::draw(glm::mat4 const &clip_from_world, glm::mat4x3 const &light_from_world) const {
 
 	//Iterate through all drawables, sending each one to OpenGL:
 	for (auto const &drawable : drawables) {
@@ -112,26 +112,26 @@ void Scene::draw(glm::mat4 const &world_to_clip, glm::mat4x3 const &world_to_lig
 
 		//the object-to-world matrix is used in all three of these uniforms:
 		assert(drawable.transform); //drawables *must* have a transform
-		glm::mat4x3 object_to_world = drawable.transform->make_local_to_world();
+		glm::mat4x3 world_from_object = drawable.transform->make_world_from_local();
 
-		//OBJECT_TO_CLIP takes vertices from object space to clip space:
-		if (pipeline.OBJECT_TO_CLIP_mat4 != -1U) {
-			glm::mat4 object_to_clip = world_to_clip * glm::mat4(object_to_world);
-			glUniformMatrix4fv(pipeline.OBJECT_TO_CLIP_mat4, 1, GL_FALSE, glm::value_ptr(object_to_clip));
+		//CLIP_FROM_OBJECT takes vertices from object space to clip space:
+		if (pipeline.CLIP_FROM_OBJECT_mat4 != -1U) {
+			glm::mat4 clip_from_object = clip_from_world * glm::mat4(world_from_object);
+			glUniformMatrix4fv(pipeline.CLIP_FROM_OBJECT_mat4, 1, GL_FALSE, glm::value_ptr(clip_from_object));
 		}
 
 		//the object-to-light matrix is used in the next two uniforms:
-		glm::mat4x3 object_to_light = world_to_light * glm::mat4(object_to_world);
+		glm::mat4x3 light_from_object = light_from_world * glm::mat4(world_from_object);
 
-		//OBJECT_TO_CLIP takes vertices from object space to light space:
-		if (pipeline.OBJECT_TO_LIGHT_mat4x3 != -1U) {
-			glUniformMatrix4x3fv(pipeline.OBJECT_TO_LIGHT_mat4x3, 1, GL_FALSE, glm::value_ptr(object_to_light));
+		//CLIP_FROM_OBJECT takes vertices from object space to light space:
+		if (pipeline.LIGHT_FROM_OBJECT_mat4x3 != -1U) {
+			glUniformMatrix4x3fv(pipeline.LIGHT_FROM_OBJECT_mat4x3, 1, GL_FALSE, glm::value_ptr(light_from_object));
 		}
 
-		//NORMAL_TO_CLIP takes normals from object space to light space:
-		if (pipeline.NORMAL_TO_LIGHT_mat3 != -1U) {
-			glm::mat3 normal_to_light = glm::inverse(glm::transpose(glm::mat3(object_to_light)));
-			glUniformMatrix3fv(pipeline.NORMAL_TO_LIGHT_mat3, 1, GL_FALSE, glm::value_ptr(normal_to_light));
+		//LIGHT_FROM_NORMAL takes normals from object space to light space:
+		if (pipeline.LIGHT_FROM_NORMAL_mat3 != -1U) {
+			glm::mat3 light_from_normal = glm::inverse(glm::transpose(glm::mat3(light_from_object)));
+			glUniformMatrix3fv(pipeline.LIGHT_FROM_NORMAL_mat3, 1, GL_FALSE, glm::value_ptr(light_from_normal));
 		}
 
 		//set any requested custom uniforms:
