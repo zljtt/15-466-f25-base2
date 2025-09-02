@@ -7,6 +7,7 @@ dist/game.pdb
 dist/SDL3.dll
 dist/game
 dist/game.exe
+scenes/SDL3.dll
 scenes/show-meshes*
 scenes/show-scene*
 *.blend[0-9]

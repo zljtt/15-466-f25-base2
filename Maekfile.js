@@ -102,6 +102,8 @@ let copies = [
 ];
 if (maek.OS === 'windows') {
 	copies.push( maek.COPY(`${NEST_LIBS}/SDL3/dist/SDL3.dll`, `dist/SDL3.dll`) );
+	//this one needed because the show-*.exe helpers sit in scenes/:
+	copies.push( maek.COPY(`${NEST_LIBS}/SDL3/dist/SDL3.dll`, `scenes/SDL3.dll`) );
 }
 
 //call rules on the maek object to specify tasks.
