@@ -76,6 +76,9 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	//Set automatic SRGB encoding if framebuffer needs it:
+	glEnable(GL_FRAMEBUFFER_SRGB);
+
 	//------------ load resources --------------
 	call_load_functions();
 
