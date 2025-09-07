@@ -32,7 +32,6 @@ struct PlayMode : Mode
     // hexapod leg to wobble:
     Scene::Transform *player = nullptr;
     Scene::Transform *water = nullptr;
-    Scene::Transform *fish = nullptr;
 
     int fish_point = 0;
     float fish_spawn_timer = 0;

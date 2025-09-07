@@ -107,7 +107,6 @@ void PlayMode::add_fish(glm::vec3 pos, glm::quat rot, int type, int size)
 
 void PlayMode::update_fishes(float elapsed)
 {
-    const glm::vec3 up(0, 0, 1);
     const float move_speed = 1.5f;
     const float max_yaw = 2.0f;
 
@@ -133,7 +132,7 @@ void PlayMode::update_fishes(float elapsed)
                     d.random_yaw_timer += (std::rand() / float(RAND_MAX)) * 0.3f;
                     float random_yaw = (std::rand() / float(RAND_MAX)) * 4.0f - 2.0f;
                     float yaw_d = random_yaw * max_yaw * elapsed;
-                    glm::quat yaw_q = glm::angleAxis(yaw_d, up);
+                    glm::quat yaw_q = glm::angleAxis(yaw_d, glm::vec3(0, 0, 1));
                     d.transform->rotation = glm::normalize(yaw_q * d.transform->rotation);
                 }
                 glm::vec3 forward = d.transform->rotation * glm::vec3(0, 1, 0);
